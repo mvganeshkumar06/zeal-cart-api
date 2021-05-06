@@ -1,0 +1,135 @@
+const express = require("express");
+const router = express.Router();
+const carts = require("../models/carts");
+const mongoose = require("mongoose");
+const products = require("../models/products");
+
+router.use("/:userId", async (req, res, next) => {
+	const { userId } = req.params;
+	const userCart = await carts.findOne({
+		user: mongoose.Types.ObjectId(userId),
+	});
+	if (!userCart) {
+		return res
+			.status(400)
+			.json({ errorMessage: "No user exist with the given id" });
+	}
+	req.userCart = userCart;
+	next();
+});
+
+router.get("/:userId", async (req, res) => {
+	try {
+		const userCart = req.userCart;
+		const userCartPopulated = await userCart
+			.populate({
+				path: "products",
+				populate: {
+					path: "product",
+					select:
+						"_id name imageUrl price trending rating category discount",
+				},
+			})
+			.execPopulate();
+		res.json(userCartPopulated.products);
+	} catch (err) {
+		res.status(400).json({ errorMessage: err });
+	}
+});
+
+router.post("/:userId", async (req, res) => {
+	try {
+		const userCart = req.userCart;
+		const { productId, quantity } = req.body;
+		const userCartProducts = userCart.products;
+
+		const productInUserCart = userCartProducts.find(
+			({ product }) => product.toString() === productId
+		);
+
+		if (productInUserCart) {
+			const updatedUserCartProducts = userCartProducts.filter(
+				({ product }) => product.toString() !== productId
+			);
+			userCart.products = updatedUserCartProducts;
+			await userCart.save();
+			const userCartPopulated = await userCart
+				.populate({
+					path: "products",
+					populate: {
+						path: "product",
+						select:
+							"_id name imageUrl price trending rating category discount",
+					},
+				})
+				.execPopulate();
+			return res.json(userCartPopulated.products);
+		}
+
+		userCartProducts.push({
+			product: productId,
+			quantity: quantity,
+		});
+
+		userCart.products = userCartProducts;
+		await userCart.save();
+		const userCartPopulated = await userCart
+			.populate({
+				path: "products",
+				populate: {
+					path: "product",
+					select:
+						"_id name imageUrl price trending rating category discount",
+				},
+			})
+			.execPopulate();
+		res.json(userCartPopulated.products);
+	} catch (err) {
+		res.status(500).json({ errorMessage: err });
+	}
+});
+
+router.post("/:userId/updateQuantity", async (req, res) => {
+	try {
+		const { productId, quantity } = req.body;
+		const userCart = req.userCart;
+		let userCartItem = userCart.products.find(
+			({ product }) => product.toString() === productId
+		);
+
+		if (!userCartItem) {
+			userCartItem = {
+				product: productId,
+				quantity: quantity,
+			};
+		}
+
+		const updatedUserCartProducts = userCart.products.filter(
+			({ product }) => product.toString() !== productId
+		);
+
+		userCartItem.quantity = quantity;
+
+		if (userCartItem.quantity !== 0) {
+			updatedUserCartProducts.push(userCartItem);
+		}
+
+		userCart.products = updatedUserCartProducts;
+		await userCart.save();
+		const userCartPopulated = await userCart
+			.populate({
+				path: "products",
+				populate: {
+					path: "product",
+					select:
+						"_id name imageUrl price trending rating category discount",
+				},
+			})
+			.execPopulate();
+		res.json(userCartPopulated.products);
+	} catch (err) {
+		res.status(500).json({ errorMessage: err });
+	}
+});
+
+module.exports = router;

@@ -10,7 +10,7 @@ router.get("/:userId", async (req, res) => {
 			.populate("user", "_id")
 			.populate(
 				"products",
-				"_id name price imageUrl discount category trending rating"
+				"_id name price imageUrl category trending rating"
 			);
 		res.json(userWishlist.products);
 	} catch (err) {
@@ -42,7 +42,7 @@ router.post("/:userId", async (req, res) => {
 			const userWishlistPopulated = await userWishlist
 				.populate(
 					"products",
-					"_id name price imageUrl discount category trending rating"
+					"_id name price imageUrl category trending rating"
 				)
 				.execPopulate();
 			return res.json(userWishlistPopulated.products);
@@ -53,7 +53,7 @@ router.post("/:userId", async (req, res) => {
 		const userWishlistPopulated = await userWishlist
 			.populate(
 				"products",
-				"_id name price imageUrl discount category trending rating"
+				"_id name price imageUrl category trending rating"
 			)
 			.execPopulate();
 		res.json(userWishlistPopulated.products);

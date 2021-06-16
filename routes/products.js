@@ -6,7 +6,7 @@ router.get("/", async (req, res) => {
 	try {
 		const allProducts = await products
 			.find({})
-			.select("_id name price imageUrl discount category trending rating")
+			.select("_id name price imageUrl category trending rating")
 			.populate("category", "_id name");
 		res.json(allProducts);
 	} catch (err) {
@@ -34,7 +34,6 @@ router.post("/", async (req, res) => {
 		await product.save();
 		res.json(product);
 	} catch (err) {
-		console.log(err);
 		res.status(500).json({ errorMessage: err });
 	}
 });

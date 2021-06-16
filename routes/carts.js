@@ -2,12 +2,10 @@ const express = require("express");
 const router = express.Router();
 const carts = require("../models/carts");
 const mongoose = require("mongoose");
-const products = require("../models/products");
 
-router.use("/:userId", async (req, res, next) => {
-	const { userId } = req.params;
+router.use("/", async (req, res, next) => {
 	const userCart = await carts.findOne({
-		user: mongoose.Types.ObjectId(userId),
+		user: mongoose.Types.ObjectId(req.user.id),
 	});
 	if (!userCart) {
 		return res
@@ -27,7 +25,7 @@ router.get("/:userId", async (req, res) => {
 				populate: {
 					path: "product",
 					select:
-						"_id name imageUrl price trending rating category discount",
+						"_id name imageUrl price trending rating category",
 				},
 			})
 			.execPopulate();
@@ -59,7 +57,7 @@ router.post("/:userId", async (req, res) => {
 					populate: {
 						path: "product",
 						select:
-							"_id name imageUrl price trending rating category discount",
+							"_id name imageUrl price trending rating category",
 					},
 				})
 				.execPopulate();
@@ -79,7 +77,7 @@ router.post("/:userId", async (req, res) => {
 				populate: {
 					path: "product",
 					select:
-						"_id name imageUrl price trending rating category discount",
+						"_id name imageUrl price trending rating category",
 				},
 			})
 			.execPopulate();
@@ -122,7 +120,7 @@ router.post("/:userId/updateQuantity", async (req, res) => {
 				populate: {
 					path: "product",
 					select:
-						"_id name imageUrl price trending rating category discount",
+						"_id name imageUrl price trending rating category",
 				},
 			})
 			.execPopulate();

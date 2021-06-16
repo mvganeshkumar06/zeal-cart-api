@@ -4,6 +4,7 @@ const users = require("../models/users");
 const wishlists = require("../models/wishlists");
 const carts = require("../models/carts");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 router.get("/", async (req, res) => {
 	try {
@@ -47,8 +48,10 @@ router.post("/login", async (req, res) => {
 			.json({ errMessage: "Wrong username, please try again" });
 	}
 	const isAuthenticated = await bcrypt.compare(password, user.password);
+
 	if (isAuthenticated) {
-		return res.json({ id: user._id, name: userName });
+		const accessToken = jwt.sign({ id: user._id, name: userName }, process.env.SERVER_SECRET);
+		return res.json({ accessToken });
 	}
 	res.status(401).json({ errorMessage: "Wrong password, please try again" });
 });

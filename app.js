@@ -7,6 +7,7 @@ const categoriesRoutes = require("./routes/categories");
 const usersRoutes = require("./routes/users");
 const wishlistsRoutes = require("./routes/wishlists");
 const cartsRoutes = require("./routes/carts");
+const verifyAccessToken = require("./middlewares/verify-access-token");
 
 const app = express();
 const port = process.env.PORT;
@@ -20,11 +21,16 @@ connectToDatabase();
 app.use("/products", productsRoutes);
 app.use("/categories", categoriesRoutes);
 app.use("/users", usersRoutes);
+app.use(verifyAccessToken);
 app.use("/wishlists", wishlistsRoutes);
 app.use("/carts", cartsRoutes);
 
 app.get("/", (req, res) => {
-	res.send("Hello world");
+	res.send("Zeal Cart API is running...");
+});
+
+app.get("*", (req, res) => {
+	res.status(404).send({ errorMessage: "Route not found" });
 });
 
 app.listen(port, () => {

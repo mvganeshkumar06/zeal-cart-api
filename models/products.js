@@ -23,9 +23,6 @@ const productSchema = new Schema(
 			type: Array,
 			required: [true, "Feature field is required"],
 		},
-		discount: {
-			type: String,
-		},
 		category: {
 			type: Schema.Types.ObjectId,
 			ref: "categories",

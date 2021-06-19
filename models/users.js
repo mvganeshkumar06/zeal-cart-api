@@ -17,18 +17,6 @@ const usersSchema = Schema({
 			type: String,
 			required: [true, "Address field is required"],
 		},
-		mobile: {
-			type: String,
-			required: [true, "Mobile field is required"],
-			validate: {
-				validator: (mobileNumber) =>
-					isMobilePhone(mobileNumber, isMobilePhoneLocals, {
-						strictMode: true,
-					}),
-				message:
-					"Please enter a correct mobile number along with the country code",
-			},
-		},
 		email: {
 			type: String,
 			required: [true, "Email field is required"],

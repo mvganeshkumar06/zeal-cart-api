@@ -9,8 +9,8 @@ router.get("/", async (req, res) => {
 			.select("_id name price imageUrl category trending rating")
 			.populate("category", "_id name");
 		res.json(allProducts);
-	} catch (err) {
-		res.json({ errorMessage: err });
+	} catch (error) {
+		res.json({ errorMessage: error.message });
 	}
 });
 
@@ -21,7 +21,7 @@ router.get("/:productId", async (req, res) => {
 			.findById(productId)
 			.populate("category", "_id name");
 		return res.json(product);
-	} catch (err) {
+	} catch (error) {
 		res.status(400).json({
 			errorMessage: "Can't find a product with the given id",
 		});
@@ -33,8 +33,8 @@ router.post("/", async (req, res) => {
 		const product = await new products(req.body);
 		await product.save();
 		res.json(product);
-	} catch (err) {
-		res.status(500).json({ errorMessage: err });
+	} catch (error) {
+		res.status(500).json({ errorMessage: error.message });
 	}
 });
 

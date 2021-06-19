@@ -30,8 +30,8 @@ router.get("/:userId", async (req, res) => {
 			})
 			.execPopulate();
 		res.json(userCartPopulated.products);
-	} catch (err) {
-		res.status(400).json({ errorMessage: err });
+	} catch (error) {
+		res.status(400).json({ errorMessage: error.message });
 	}
 });
 
@@ -82,8 +82,8 @@ router.post("/:userId", async (req, res) => {
 			})
 			.execPopulate();
 		res.json(userCartPopulated.products);
-	} catch (err) {
-		res.status(500).json({ errorMessage: err });
+	} catch (error) {
+		res.status(500).json({ errorMessage: error.message });
 	}
 });
 
@@ -125,8 +125,8 @@ router.post("/:userId/updateQuantity", async (req, res) => {
 			})
 			.execPopulate();
 		res.json(userCartPopulated.products);
-	} catch (err) {
-		res.status(500).json({ errorMessage: err });
+	} catch (error) {
+		res.status(500).json({ errorMessage: error.message });
 	}
 });
 

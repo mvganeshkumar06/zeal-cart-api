@@ -13,13 +13,17 @@ router.get("/", async (req, res) => {
 			.populate("wishlist")
 			.populate("cart");
 		res.json(allUsers);
-	} catch (err) {
-		res.status(404).json({ errMessage: err });
+	} catch (error) {
+		res.status(404).json({ errorMessage: error.message });
 	}
 });
 
-router.post("/", async (req, res) => {
+router.post("/signup", async (req, res) => {
 	try {
+		const isUserExisting = await users.findOne({ userName: req.body.userName });
+		if (isUserExisting) {
+			return res.status(409).json({ errorMessage: "Username already exists, please try a different username" });
+		}
 		req.body.password = await bcrypt.hash(req.body.password, 10);
 		const user = await new users(req.body);
 		const userWishlist = await new wishlists({
@@ -33,9 +37,9 @@ router.post("/", async (req, res) => {
 		await userWishlist.save();
 		await userCart.save();
 		await user.save();
-		res.json(user);
-	} catch (err) {
-		res.status(500).json({ errorMessage: err });
+		res.json(user.id);
+	} catch (error) {
+		res.status(500).json({ errorMessage: error.message });
 	}
 });
 
@@ -45,7 +49,7 @@ router.post("/login", async (req, res) => {
 	if (!user) {
 		return res
 			.status(401)
-			.json({ errMessage: "Wrong username, please try again" });
+			.json({ errorMessage: "Wrong username, please try again" });
 	}
 	const isAuthenticated = await bcrypt.compare(password, user.password);
 

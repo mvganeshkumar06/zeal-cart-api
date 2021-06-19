@@ -13,8 +13,8 @@ router.get("/:userId", async (req, res) => {
 				"_id name price imageUrl category trending rating"
 			);
 		res.json(userWishlist.products);
-	} catch (err) {
-		res.status(400).json({ errorMessage: err });
+	} catch (error) {
+		res.status(400).json({ errorMessage: error.message });
 	}
 });
 
@@ -57,8 +57,8 @@ router.post("/:userId", async (req, res) => {
 			)
 			.execPopulate();
 		res.json(userWishlistPopulated.products);
-	} catch (err) {
-		res.status(500).json({ errorMessage: err });
+	} catch (error) {
+		res.status(500).json({ errorMessage: error.message });
 	}
 });
 

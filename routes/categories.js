@@ -9,8 +9,8 @@ router.get("/", async (req, res) => {
 			.find({})
 			.populate("products", "_id name imageUrl");
 		res.json(allCategories);
-	} catch (err) {
-		res.status(500).json({ errorMessage: err });
+	} catch (error) {
+		res.status(500).json({ errorMessage: error.message });
 	}
 });
 
@@ -33,8 +33,8 @@ router.post("/", async (req, res) => {
 
 		await category.save();
 		res.json(category);
-	} catch (err) {
-		res.status(500).json({ errorMessage: err });
+	} catch (error) {
+		res.status(500).json({ errorMessage: error.message });
 	}
 });
 

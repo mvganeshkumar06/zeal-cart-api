@@ -21,9 +21,8 @@ connectToDatabase();
 app.use("/products", productsRoutes);
 app.use("/categories", categoriesRoutes);
 app.use("/users", usersRoutes);
-app.use(verifyAccessToken);
-app.use("/wishlists", wishlistsRoutes);
-app.use("/carts", cartsRoutes);
+app.use("/wishlists", verifyAccessToken, wishlistsRoutes);
+app.use("/carts", verifyAccessToken, cartsRoutes);
 
 app.get("/", (req, res) => {
 	res.send("Zeal Cart API is running...");

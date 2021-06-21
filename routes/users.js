@@ -27,11 +27,11 @@ router.post("/signup", async (req, res) => {
 		req.body.password = await bcrypt.hash(req.body.password, 10);
 		const user = await new users(req.body);
 		const userWishlist = await new wishlists({
-			userId: user._id,
+			user: user._id,
 			products: [],
 		});
 		const userCart = await new carts({
-			userId: user._id,
+			user: user._id,
 			products: [],
 		});
 		await userWishlist.save();
@@ -58,6 +58,21 @@ router.post("/login", async (req, res) => {
 		return res.json({ accessToken });
 	}
 	res.status(401).json({ errorMessage: "Wrong password, please try again" });
+});
+
+router.post("/deleteUser", async (req, res) => {
+	const { userName } = req.body;
+	const user = await users.find({ userName: userName });
+	if (!user) {
+		return res
+			.status(404)
+			.json({ errorMessage: "No user exist with given username" });
+	}
+
+	await users.deleteOne({ userName: userName });
+	await wishlists.deleteOne({ user: user._id });
+	await carts.deleteOne({ user: user._id });
+	res.send("Deleted user");
 });
 
 module.exports = router;
